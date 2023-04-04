@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class LoteRepositoryTests {
 
     @Autowired
-    LoteRepository<Lote, Long> driver;
+    LoteRepository driver;
 
     Lote lote;
     Produto produto;
@@ -24,14 +24,12 @@ class LoteRepositoryTests {
     @BeforeEach
     void setUp() {
         produto = Produto.builder()
-                .id(1L)
                 .nome("Produto Base")
-                .codigoBarra("123456789")
+                .codigoDeBarras("123456789")
                 .fabricante("Fabricante Base")
                 .preco(100.00)
                 .build();
         lote = Lote.builder()
-                .id(1L)
                 .produto(produto)
                 .numeroDeItens(100)
                 .build();
@@ -39,8 +37,7 @@ class LoteRepositoryTests {
 
     @AfterEach
     void tearDown() {
-        produto = null;
-        lote = null;
+        driver.deleteAll();
     }
 
     @Test
@@ -53,7 +50,6 @@ class LoteRepositoryTests {
         // Assert
         assertNotNull(resultado);
         assertEquals(1, driver.findAll().size());
-        assertEquals(lote.getId().longValue(), resultado.getId().longValue());
         assertEquals(produto, resultado.getProduto());
     }
 
@@ -63,14 +59,12 @@ class LoteRepositoryTests {
         // Arrange
         driver.deleteAll();
         Produto produto2 = Produto.builder()
-                .id(2L)
                 .nome("Produto Dois")
-                .codigoBarra("987654321")
+                .codigoDeBarras("987654321")
                 .fabricante("Fabricante Dois")
                 .preco(200.00)
                 .build();
         Lote lote2 = Lote.builder()
-                .id(2L)
                 .produto(produto2)
                 .numeroDeItens(200)
                 .build();
@@ -82,7 +76,6 @@ class LoteRepositoryTests {
         // Assert
         assertNotNull(resultado);
         assertEquals(2, driver.findAll().size());
-        assertEquals(lote2.getId().longValue(), resultado.getId().longValue());
         assertEquals(produto2, resultado.getProduto());
 
     }

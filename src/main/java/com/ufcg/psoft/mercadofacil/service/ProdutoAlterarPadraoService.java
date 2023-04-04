@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProdutoAlterarPadraoService implements ProdutoAlterarService {
     @Autowired
-    ProdutoRepository<Produto, Long> produtoRepository;
+    ProdutoRepository produtoRepository;
     @Override
     public Produto alterar(Produto produto) {
-        return produtoRepository.update(produto);
+        return produtoRepository.save(produto);
     }
 }

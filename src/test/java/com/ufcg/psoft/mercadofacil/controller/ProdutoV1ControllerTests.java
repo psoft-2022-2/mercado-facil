@@ -23,7 +23,7 @@ public class ProdutoV1ControllerTests {
     MockMvc driver;
 
     @Autowired
-    ProdutoRepository<Produto, Long> produtoRepository;
+    ProdutoRepository produtoRepository;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -31,12 +31,17 @@ public class ProdutoV1ControllerTests {
 
     @BeforeEach
     void setup() {
-        produto = produtoRepository.find(10L);
+        produto = produtoRepository.save(Produto.builder()
+                .codigoDeBarras("1234567890123")
+                .fabricante("Fabricante Dez")
+                .nome("Produto Dez")
+                .preco(100.00)
+                .build());
     }
 
     @AfterEach
     void tearDown() {
-        produto = null;
+        produtoRepository.deleteAll();
     }
 
     @Nested
