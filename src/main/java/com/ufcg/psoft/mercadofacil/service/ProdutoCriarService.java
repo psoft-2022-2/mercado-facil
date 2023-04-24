@@ -4,6 +4,6 @@ import com.ufcg.psoft.mercadofacil.dto.ProdutoPostPutRequestDTO;
 import com.ufcg.psoft.mercadofacil.model.Produto;
 
 @FunctionalInterface
-public interface ProdutoAlterarService {
-    Produto alterar(Long id, ProdutoPostPutRequestDTO produtoPostPutRequestDTO);
+public interface ProdutoCriarService {
+    Produto salvar(ProdutoPostPutRequestDTO produtoPostPutRequestDTO);
 }

@@ -26,7 +26,7 @@ public class Produto {
     @JsonProperty("preco")
     @Column(nullable = false)
     private Double preco;
-    @JsonProperty("codigoBarra")
+    @JsonProperty("codigoDeBarras")
     @Column(nullable = false)
     private String codigoDeBarras;
     @JsonProperty("fabricante")

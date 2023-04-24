@@ -1,6 +1,5 @@
 package com.ufcg.psoft.mercadofacil.service;
 
-import com.ufcg.psoft.mercadofacil.dto.ProdutoPostPutRequestDTO;
 import com.ufcg.psoft.mercadofacil.exception.ProdutoNaoExisteException;
 import com.ufcg.psoft.mercadofacil.model.Produto;
 import com.ufcg.psoft.mercadofacil.repository.ProdutoRepository;
@@ -9,15 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProdutoAlterarPadraoService implements ProdutoAlterarService {
+public class ProdutoExcluirPadraoService implements ProdutoExcluirService {
     @Autowired
     ProdutoRepository produtoRepository;
     @Autowired
     ModelMapper modelMapper;
     @Override
-    public Produto alterar(Long id, ProdutoPostPutRequestDTO produtoPostPutRequestDTO) {
+    public void excluir(Long id) {
         Produto produto = produtoRepository.findById(id).orElseThrow(ProdutoNaoExisteException::new);
-        modelMapper.map(produtoPostPutRequestDTO, produto);
-        return produtoRepository.save(produto);
+        produtoRepository.delete(produto);
     }
 }
