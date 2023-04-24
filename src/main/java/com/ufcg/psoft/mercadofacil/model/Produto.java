@@ -34,7 +34,7 @@ public class Produto {
     private String fabricante;
 
     @JsonProperty("lotes")
-    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "produto", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private Set<Lote> lotes;
 
 }

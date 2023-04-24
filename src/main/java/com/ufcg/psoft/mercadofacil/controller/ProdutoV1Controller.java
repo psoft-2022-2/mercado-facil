@@ -1,10 +1,8 @@
 package com.ufcg.psoft.mercadofacil.controller;
 
+import com.ufcg.psoft.mercadofacil.dto.ProdutoNomePatchRequestDTO;
 import com.ufcg.psoft.mercadofacil.dto.ProdutoPostPutRequestDTO;
-import com.ufcg.psoft.mercadofacil.service.ProdutoAlterarService;
-import com.ufcg.psoft.mercadofacil.service.ProdutoCriarPadraoService;
-import com.ufcg.psoft.mercadofacil.service.ProdutoExcluirService;
-import com.ufcg.psoft.mercadofacil.service.ProdutoListarService;
+import com.ufcg.psoft.mercadofacil.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,9 +20,11 @@ public class ProdutoV1Controller {
     @Autowired
     ProdutoListarService produtoListarService;
     @Autowired
-    ProdutoCriarPadraoService produtoCriarService;
+    ProdutoCriarService produtoCriarService;
     @Autowired
-    ProdutoAlterarService produtoAtualizarService;
+    ProdutoAlterarService produtoAlterarService;
+    @Autowired
+    ProdutoAlterarNomeService produtoAlterarNomeService;
     @Autowired
     ProdutoExcluirService produtoExcluirService;
 
@@ -57,7 +57,7 @@ public class ProdutoV1Controller {
             @RequestBody @Valid ProdutoPostPutRequestDTO produtoPostPutRequestDto) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(produtoAtualizarService.alterar(id, produtoPostPutRequestDto));
+                .body(produtoAlterarService.alterar(id, produtoPostPutRequestDto));
     }
 
     @DeleteMapping("/{id}")
@@ -68,6 +68,15 @@ public class ProdutoV1Controller {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .body("");
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> atualizarParcialmenteProduto(
+            @PathVariable Long id,
+            @RequestBody @Valid ProdutoNomePatchRequestDTO produtoNomePatchRequestDTO) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(produtoAlterarNomeService.alterarParcialmente(id, produtoNomePatchRequestDTO));
     }
 
 }

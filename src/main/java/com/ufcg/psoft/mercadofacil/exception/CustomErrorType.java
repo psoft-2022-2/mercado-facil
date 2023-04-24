@@ -1,5 +1,6 @@
 package com.ufcg.psoft.mercadofacil.exception;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,8 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomErrorType {
+    @JsonProperty("timestamp")
     private LocalDateTime timestamp;
+    @JsonProperty("message")
     private String message;
+    @JsonProperty("errors")
     private List<String> errors;
     public CustomErrorType(MercadoFacilException e) {
         this.timestamp = LocalDateTime.now();
