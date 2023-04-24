@@ -1,75 +1,41 @@
 package com.ufcg.psoft.mercadofacil.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import com.ufcg.psoft.mercadofacil.model.Produto;
+import java.util.Set;
 
 @Entity
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "produtos")
 public class Produto {
+    @JsonProperty("id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @JsonProperty("nome")
+    @Column(nullable = false)
+    private String nome;
+    @JsonProperty("preco")
+    @Column(nullable = false)
+    private Double preco;
+    @JsonProperty("codigoDeBarras")
+    @Column(nullable = false)
+    private String codigoDeBarras;
+    @JsonProperty("fabricante")
+    @Column(nullable = false)
+    private String fabricante;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	private String nome;
+    @JsonProperty("lotes")
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
+    private Set<Lote> lotes;
 
-	private double preco;
-
-	private String codigoBarra;
-
-	private String fabricante;
-
-	private Produto() {	}
-
-	public Produto(String nome, String codigoBarra, String fabricante,
-			double preco) {
-		
-		this.nome = nome;
-		this.preco = preco;
-		this.codigoBarra = codigoBarra;
-		this.fabricante = fabricante;
-	}
-	
-	public Long getId() {
-		return id;
-	}
-	
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public double getPreco() {
-		return preco;
-	}
-
-	public void setPreco(double preco) {
-		this.preco = preco;
-	}
-
-	public String getFabricante() {
-		return fabricante;
-	}
-
-	public void setFabricante(String fabricante) {
-		this.fabricante = fabricante;
-	}
-
-	public String getCodigoBarra() {
-		return codigoBarra;
-	}
-
-	public void setCodigoBarra(String codigoBarra) {
-		this.codigoBarra = codigoBarra;
-	}
-
-	public String toString() {
-		return this.id + " " + this.nome;
-	}
 }
+
