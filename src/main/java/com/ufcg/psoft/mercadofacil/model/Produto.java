@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -34,8 +35,21 @@ public class Produto {
     private String fabricante;
 
     @JsonProperty("lotes")
-    @OneToMany(mappedBy = "produto", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToMany(mappedBy = "produto",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
     private Set<Lote> lotes;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Produto produto)) return false;
+        return Objects.equals(getId(), produto.getId()) && Objects.equals(getNome(), produto.getNome()) && Objects.equals(getPreco(), produto.getPreco()) && Objects.equals(getCodigoDeBarras(), produto.getCodigoDeBarras()) && Objects.equals(getFabricante(), produto.getFabricante());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getNome(), getPreco(), getCodigoDeBarras(), getFabricante());
+    }
 }
 

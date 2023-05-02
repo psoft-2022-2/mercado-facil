@@ -1,5 +1,6 @@
 package com.ufcg.psoft.mercadofacil.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,12 +20,14 @@ public class Lote {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @JsonProperty("produto")
-    @ManyToOne(optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_produto_id")
     private Produto produto;
 
     @JsonProperty("numeroDeItens")
     @Column(nullable = false)
     private Integer numeroDeItens;
+
 }
 

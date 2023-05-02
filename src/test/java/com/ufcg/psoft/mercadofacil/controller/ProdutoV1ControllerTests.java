@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ufcg.psoft.mercadofacil.dto.ProdutoNomePatchRequestDTO;
 import com.ufcg.psoft.mercadofacil.dto.ProdutoPostPutRequestDTO;
 import com.ufcg.psoft.mercadofacil.exception.CustomErrorType;
+import com.ufcg.psoft.mercadofacil.model.Lote;
 import com.ufcg.psoft.mercadofacil.model.Produto;
 import com.ufcg.psoft.mercadofacil.repository.ProdutoRepository;
 import org.junit.jupiter.api.*;
@@ -15,8 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,6 +41,8 @@ public class ProdutoV1ControllerTests {
 
     ObjectMapper objectMapper = new ObjectMapper();
 
+    final String URI_PRODUTOS = "/v1/produtos";
+
     Produto produto;
 
     @BeforeEach
@@ -51,6 +54,7 @@ public class ProdutoV1ControllerTests {
                 .fabricante("Fabricante Dez")
                 .nome("Produto Dez")
                 .preco(100.00)
+                .lotes(new HashSet<>())
                 .build()
         );
     }
@@ -126,8 +130,6 @@ public class ProdutoV1ControllerTests {
     @Nested
     @DisplayName("Conjunto de casos de verificação dos fluxos básicos API Rest")
     class ProdutoVerificacaoFluxosBasicosApiRest {
-
-        final String URI_PRODUTOS = "/v1/produtos";
         ProdutoPostPutRequestDTO produtoPutRequestDTO;
         ProdutoPostPutRequestDTO produtoPostRequestDTO;
 
@@ -279,6 +281,88 @@ public class ProdutoV1ControllerTests {
 
             // Assert
             assertTrue(responseJsonString.isBlank());
+
+        }
+
+    }
+
+    @Nested
+    @DisplayName("Conjunto de casos de verificação da consistência do Produto nos Lotes")
+    class ProdutoConjuntoDeLotes {
+        Lote lote1;
+        Lote lote2;
+        Lote lote3;
+
+        Produto produto3;
+
+        @BeforeEach
+        void setup() {
+            lote1 = Lote.builder()
+                    .produto(produto)
+                    .numeroDeItens(50)
+                    .build();
+            lote2 = Lote.builder()
+                    .produto(produto)
+                    .numeroDeItens(100)
+                    .build();
+            produto.getLotes().add(lote1);
+            produto.getLotes().add(lote2);
+
+            produto3 = Produto.builder()
+                    .codigoDeBarras("3030303030303")
+                    .nome("Produto Trinta")
+                    .fabricante("Fabricante Trinta")
+                    .preco(30.0)
+                    .lotes(new HashSet<>())
+                    .build();
+            lote3 = Lote.builder()
+                    .produto(produto3)
+                    .numeroDeItens(300)
+                    .build();
+            produto3.getLotes().add(lote3);
+            produtoRepository.saveAll(Arrays.asList(produto, produto3));
+
+        }
+
+        @Test
+        @DisplayName("Quando desejamos verificar a quantidade de lotes em que um produto existe (produto existente inserido no lote)")
+        void quandoDesejamosVerificarQuantidadeLotesProdutoQueProdutoExiste() throws Exception {
+            // Arrange
+            // nenhuma necessidade além do setup()
+
+            // Act
+            String responseJsonString = driver.perform(get(URI_PRODUTOS + "/" + produto.getId())
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk()) // Codigo 200
+                    .andDo(print())
+                    .andReturn().getResponse().getContentAsString();
+
+            List<Produto> produtos = objectMapper.readValue(responseJsonString, new TypeReference<List<Produto>>() {});
+            Produto resultado = produtos.get(0);
+
+            // Assert
+            assertEquals(2, resultado.getLotes().size());
+
+        }
+
+        @Test
+        @DisplayName("Quando desejamos verificar a quantidade de lotes em que um produto existe (produto criado junto com o lote)")
+        void quandoDesejamosVerificarQuantidadeLotesProdutoQueProdutoInseridoAtravesDeLoteExiste() throws Exception {
+            // Arrange
+            // nenhuma necessidade além do setup()
+
+            // Act
+            String responseJsonString = driver.perform(get(URI_PRODUTOS + "/" + produto3.getId())
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk()) // Codigo 200
+                    .andDo(print())
+                    .andReturn().getResponse().getContentAsString();
+
+            List<Produto> produtos = objectMapper.readValue(responseJsonString, new TypeReference<List<Produto>>() {});
+            Produto resultado = produtos.get(0);
+
+            // Assert
+            assertEquals(1, resultado.getLotes().size());
 
         }
 
